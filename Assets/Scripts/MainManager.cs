@@ -1,18 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MainManager : MonoBehaviour
+public class MainManager : Singleton<MainManager>
 {
     public Brick BrickPrefab;
     public int LineCount = 6;
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestScoreText;
     public GameObject GameOverText;
-    
+
     private bool m_Started = false;
     private int m_Points;
     
@@ -36,6 +35,10 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        BestScoreText.text = $"Best Score : {HighScoreManager.Instance.highScorePlayer} - {HighScoreManager.Instance.highScore}";
+
+        Events.Instance.onHighScoreChanged += NewHighScore;
     }
 
     private void Update()
@@ -68,9 +71,35 @@ public class MainManager : MonoBehaviour
         ScoreText.text = $"Score : {m_Points}";
     }
 
+    internal void CheckHighScore()
+    {
+        if (m_Points > HighScoreManager.Instance.highScore)
+        {
+            HighScoreManager.Instance.SetHighScorePlayer(m_Points);
+        }
+    }
+
+    void NewHighScore()
+    {
+        BestScoreText.text = $"Best Score : {HighScoreManager.Instance.highScorePlayer} - {HighScoreManager.Instance.highScore}";
+    }
+
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+
+    public void GoToMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    protected override void OnDestroy()
+    {
+        if (Events.Instance)
+        {
+            Events.Instance.onHighScoreChanged -= NewHighScore;
+        }
     }
 }
