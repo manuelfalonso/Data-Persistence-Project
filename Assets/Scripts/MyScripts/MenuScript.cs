@@ -5,13 +5,12 @@ using UnityEngine.UI;
 
 public class MenuScript : MonoBehaviour
 {
-	public TMP_InputField input;
-	
+	public TMP_InputField input;	
 	public Text BestScoreText;
 
     private void Start()
     {
-		HighScoreManager.Instance.LoadHighScore();
+		//HighScoreManager.Instance.LoadHighScore();
 		Events.Instance.onHighScoreChanged += NewHighScore;
 		Events.Instance.NewHighScore();
 	}
@@ -23,13 +22,19 @@ public class MenuScript : MonoBehaviour
 
 	void NewHighScore()
 	{
-		BestScoreText.text = $"Best Score : {HighScoreManager.Instance.highScorePlayer} - {HighScoreManager.Instance.highScore}";
+		BestScoreText.text = $"Best Score : {HighScoreManager.Instance.bestHighScorePlayer} - {HighScoreManager.Instance.bestHighScore}";
 	}
 
 	public void HighScoreMenu()
 	{
 		SceneManager.LoadScene(2);
 	}
+
+	public void ResetHighScore()
+    {
+		HighScoreManager.Instance.ResetHighScores();
+		NewHighScore();
+    }
 
 	public void StartGame()
     {		

@@ -16,7 +16,6 @@ public class MainManager : Singleton<MainManager>
     private int m_Points;
     
     private bool m_GameOver = false;
-
     
     // Start is called before the first frame update
     void Start()
@@ -36,7 +35,7 @@ public class MainManager : Singleton<MainManager>
             }
         }
 
-        BestScoreText.text = $"Best Score : {HighScoreManager.Instance.highScorePlayer} - {HighScoreManager.Instance.highScore}";
+        BestScoreText.text = $"Best Score : {HighScoreManager.Instance.bestHighScorePlayer} - {HighScoreManager.Instance.bestHighScore}";
 
         Events.Instance.onHighScoreChanged += NewHighScore;
     }
@@ -73,15 +72,12 @@ public class MainManager : Singleton<MainManager>
 
     internal void CheckHighScore()
     {
-        if (m_Points > HighScoreManager.Instance.highScore)
-        {
-            HighScoreManager.Instance.SetHighScorePlayer(m_Points);
-        }
+        HighScoreManager.Instance.CheckHighScore(m_Points);
     }
 
     void NewHighScore()
     {
-        BestScoreText.text = $"Best Score : {HighScoreManager.Instance.highScorePlayer} - {HighScoreManager.Instance.highScore}";
+        BestScoreText.text = $"Best Score : {HighScoreManager.Instance.bestHighScorePlayer} - {HighScoreManager.Instance.bestHighScore}";
     }
 
     public void GameOver()
