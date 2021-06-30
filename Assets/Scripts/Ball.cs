@@ -1,15 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
+    [SerializeField]
+    private float maxSpeed = 3;
+
     private Rigidbody m_Rigidbody;
 
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
+        LoadSettings();
     }
     
     private void OnCollisionExit(Collision other)
@@ -26,11 +31,24 @@ public class Ball : MonoBehaviour
         }
 
         //max velocity
-        if (velocity.magnitude > 3.0f)
+        if (velocity.magnitude > maxSpeed)
         {
-            velocity = velocity.normalized * 3.0f;
+            velocity = velocity.normalized * maxSpeed;
         }
 
         m_Rigidbody.velocity = velocity;
+    }
+
+    public void LoadSettings()
+    {
+        string path = Application.persistentDataPath + "/saveSettingsfile.json";
+
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveSettings.SaveSettingsData data = JsonUtility.FromJson<SaveSettings.SaveSettingsData>(json);
+
+            maxSpeed = data.GetBallValue();
+        }
     }
 }
